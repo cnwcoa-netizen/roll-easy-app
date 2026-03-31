@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 void main() {
   runApp(RollEasyApp());
@@ -9,13 +10,62 @@ class RollEasyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Roll Easy',
-      theme: ThemeData(primarySwatch: Colors.blue),
-      home: HomeScreen(),
+      home: SplashScreen(),
     );
   }
 }
 
+// 🚆 SPLASH SCREEN
+class SplashScreen extends StatefulWidget {
+  @override
+  _SplashScreenState createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    Timer(Duration(seconds: 2), () {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (_) => HomeScreen()),
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.blue.shade900,
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+
+            Icon(Icons.train, color: Colors.white, size: 80),
+
+            SizedBox(height: 20),
+
+            Text("Roll Easy",
+                style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold)),
+
+            SizedBox(height: 10),
+
+            Text("Coaching Depot - KAKINADA",
+                style: TextStyle(color: Colors.white70))
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// 🚆 HOME SCREEN WITH BACKGROUND
 class HomeScreen extends StatefulWidget {
   @override
   _HomeScreenState createState() => _HomeScreenState();
@@ -121,7 +171,7 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   };
 
-  void diagnose() {
+    void diagnose() {
     String code = controller.text.trim();
 
     if (wspDB[selectedMake]?[code] != null) {
@@ -137,67 +187,102 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          children: [
-            Text("Roll Easy"),
-            Text("Coaching Depot - KAKINADA",
-                style: TextStyle(fontSize: 12))
-          ],
-        ),
-      ),
+      body: Stack(
+        children: [
 
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-
-            DropdownButton(
-              value: selectedMake,
-              items: ["KB", "Escorts", "Faiveley"]
-                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                  .toList(),
-              onChanged: (v) => setState(() => selectedMake = v!),
-            ),
-
-            TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                labelText: lang == "te"
-                    ? "లోపం కోడ్ నమోదు చేయండి"
-                    : "Enter Fault Code",
-                border: OutlineInputBorder(),
+          // 🚆 BACKGROUND IMAGE
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: NetworkImage(
+                  "https://upload.wikimedia.org/wikipedia/commons/3/3e/Vande_Bharat_Train.jpg"
+                ),
+                fit: BoxFit.cover,
               ),
             ),
+          ),
 
-            ElevatedButton(
-              onPressed: diagnose,
-              child: Text(lang == "te" ? "పరిశీలించండి" : "Diagnose"),
-            ),
+          // 🌫️ DARK OVERLAY
+          Container(
+            color: Colors.black.withOpacity(0.6),
+          ),
 
-            Switch(
-              value: lang == "te",
-              onChanged: (v) => setState(() => lang = v ? "te" : "en"),
-            ),
+          // 📱 CONTENT
+          Padding(
+            padding: EdgeInsets.all(16),
+            child: Column(
+              children: [
 
-            SizedBox(height: 20),
+                SizedBox(height: 50),
 
-            if (result != null)
-              Card(
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Fault: ${result!["fault"]}"),
-                      SizedBox(height: 10),
-                      Text("Action: ${result!["action"]}")
-                    ],
+                Text("Roll Easy",
+                    style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold)),
+
+                Text("Coaching Depot - KAKINADA",
+                    style: TextStyle(color: Colors.white70)),
+
+                SizedBox(height: 20),
+
+                DropdownButton(
+                  dropdownColor: Colors.black,
+                  value: selectedMake,
+                  style: TextStyle(color: Colors.white),
+                  items: ["KB", "Escorts", "Faiveley"]
+                      .map((e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(e,
+                              style: TextStyle(color: Colors.white))))
+                      .toList(),
+                  onChanged: (v) => setState(() => selectedMake = v!),
+                ),
+
+                TextField(
+                  controller: controller,
+                  style: TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    labelText: lang == "te"
+                        ? "లోపం కోడ్ నమోదు చేయండి"
+                        : "Enter Fault Code",
+                    labelStyle: TextStyle(color: Colors.white),
+                    border: OutlineInputBorder(),
                   ),
                 ),
-              )
-          ],
-        ),
+
+                SizedBox(height: 10),
+
+                ElevatedButton(
+                  onPressed: diagnose,
+                  child: Text("Diagnose"),
+                ),
+
+                Switch(
+                  value: lang == "te",
+                  onChanged: (v) => setState(() => lang = v ? "te" : "en"),
+                ),
+
+                SizedBox(height: 20),
+
+                if (result != null)
+                  Card(
+                    child: Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("Fault: ${result!["fault"]}"),
+                          SizedBox(height: 10),
+                          Text("Action: ${result!["action"]}")
+                        ],
+                      ),
+                    ),
+                  )
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
