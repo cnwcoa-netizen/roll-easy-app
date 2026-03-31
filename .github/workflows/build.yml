@@ -10,49 +10,40 @@ jobs:
 
     steps:
 
-    # Checkout code
+    # Checkout repo
     - uses: actions/checkout@v4
 
-    # Setup Java (required for Gradle)
+    # Setup Java
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    # Setup Flutter (this also sets up Android SDK internally)
+    # Setup Flutter
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.22.0'
         channel: 'stable'
 
-    # Verify setup
-    - run: flutter doctor
+    # Clone a working Flutter template (THIS IS THE KEY FIX)
+    - name: Get Clean Flutter Project
+      run: git clone https://github.com/flutter/samples.git
 
-    # Create fresh Flutter project (v2 embedding ensured)
-    - name: Create Project
-      run: flutter create app
+    - name: Use template
+      run: |
+        mv samples/hello_world app
 
-    # Replace main.dart
-    - name: Copy Code
+    # Replace your code
+    - name: Replace main.dart
       run: cp app_code.dart app/lib/main.dart
-
-    # Replace pubspec.yaml
-    - name: Copy Pubspec
-      run: cp pubspec.yaml app/pubspec.yaml
 
     # Install dependencies
     - name: Pub Get
       run: |
         cd app
         flutter pub get
-
-    # Clean build (important)
-    - name: Clean
-      run: |
-        cd app
-        flutter clean
 
     # Build APK
     - name: Build APK
