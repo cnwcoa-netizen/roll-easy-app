@@ -187,28 +187,27 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
 
     return Scaffold(
-      body: Stack(
-        children: [
+      resizeToAvoidBottomInset: true,
+  body: Stack(
+    children: [
 
-          // 🚆 BACKGROUND IMAGE
-          Container(
-            decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage(
-                  "assets/vande_bharat.jpg"
-                ),
-                fit: BoxFit.cover,
-              ),
-            ),
+      // Background
+      Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage("assets/vande_bharat.jpg"),
+            fit: BoxFit.cover,
           ),
+        ),
+      ),
 
-          // 🌫️ DARK OVERLAY
-          Container(
-            color: Colors.black.withOpacity(0.6),
-          ),
+      // Overlay
+      Container(color: Colors.black.withOpacity(0.6)),
 
-          // 📱 CONTENT
-          Padding(
+      // Content
+      SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
             padding: EdgeInsets.all(16),
             child: Column(
               children: [
