@@ -34,6 +34,9 @@ jobs:
     # Create clean Flutter project
     - name: Create Project
       run: flutter create app
+    - name: Set App Name
+      run: |
+        sed -i 's/android:label="app"/android:label="Roll Easy"/' app/android/app/src/main/AndroidManifest.xml
 
     # Replace main.dart
     - name: Copy Code
