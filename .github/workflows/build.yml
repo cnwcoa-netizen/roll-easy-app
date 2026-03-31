@@ -1,0 +1,43 @@
+name: Build APK
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - uses: actions/checkout@v4
+
+    # ✅ Create fresh Flutter project
+    - name: Create Flutter Project
+      run: flutter create app
+
+    # ✅ Replace main.dart with your code
+    - name: Replace Code
+      run: |
+        cp app_code.dart app/lib/main.dart
+
+    # ✅ Replace pubspec
+    - name: Replace Pubspec
+      run: |
+        cp pubspec.yaml app/pubspec.yaml
+
+    - name: Install dependencies
+      run: |
+        cd app
+        flutter pub get
+
+    - name: Build APK
+      run: |
+        cd app
+        flutter build apk --release
+
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: roll-easy-apk
+        path: app/build/app/outputs/flutter-apk/app-release.apk
