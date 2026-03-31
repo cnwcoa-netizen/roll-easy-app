@@ -11,3 +11,5 @@ dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/vande_bharat.jpg
