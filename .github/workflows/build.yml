@@ -13,31 +13,38 @@ jobs:
     # Checkout repo
     - uses: actions/checkout@v4
 
-    # Setup Java
+    # Setup Java (Gradle requirement)
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    # Setup Flutter
+    # Setup Flutter (includes Android SDK)
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.22.0'
         channel: 'stable'
 
-    # Clone a working Flutter template (THIS IS THE KEY FIX)
-    - name: Get Clean Flutter Project
-      run: git clone https://github.com/flutter/samples.git
+    # Verify environment
+    - name: Flutter Doctor
+      run: flutter doctor -v
 
-    - name: Use template
-      run: |
-        mv samples/hello_world app
+    # Create clean Flutter project
+    - name: Create Project
+      run: flutter create app
 
-    # Replace your code
-    - name: Replace main.dart
+    # Replace main.dart
+    - name: Copy Code
       run: cp app_code.dart app/lib/main.dart
+
+    # FIX: Force correct Android SDK versions
+    - name: Fix Android Config
+      run: |
+        sed -i 's/minSdkVersion 16/minSdkVersion 21/' app/android/app/build.gradle
+        sed -i 's/compileSdkVersion flutter.compileSdkVersion/compileSdkVersion 34/' app/android/app/build.gradle || true
+        sed -i 's/targetSdkVersion flutter.targetSdkVersion/targetSdkVersion 34/' app/android/app/build.gradle || true
 
     # Install dependencies
     - name: Pub Get
@@ -45,11 +52,17 @@ jobs:
         cd app
         flutter pub get
 
-    # Build APK
+    # Clean project
+    - name: Clean
+      run: |
+        cd app
+        flutter clean
+
+    # Build APK (SAFE MODE)
     - name: Build APK
       run: |
         cd app
-        flutter build apk --debug
+        flutter build apk --debug --no-tree-shake-icons
 
     # Upload APK
     - uses: actions/upload-artifact@v4
