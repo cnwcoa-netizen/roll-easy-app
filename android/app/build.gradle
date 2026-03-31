@@ -1,9 +1,0 @@
-android {
-    compileSdkVersion 33
-
-    defaultConfig {
-        applicationId "com.example.roll_easy"
-        minSdkVersion 21
-        targetSdkVersion 33
-    }
-}
