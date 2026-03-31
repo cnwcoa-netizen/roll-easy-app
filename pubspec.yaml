@@ -8,7 +8,6 @@ dependencies:
   flutter:
     sdk: flutter
   speech_to_text: ^6.3.0
-  flutter_tts: ^3.8.5
 
 flutter:
   uses-material-design: true
