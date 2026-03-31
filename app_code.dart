@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+ddimport 'package:flutter/material.dart';
 import 'dart:async';
 
 void main() {
@@ -193,13 +193,19 @@ class _HomeScreenState extends State<HomeScreen> {
 
       // Background
       Container(
-        decoration: BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/vande_bharat.jpg"),
-            fit: BoxFit.cover,
-          ),
+       decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color(0xFFFF9933),
+            Colors.white,
+            Color(0xFF138808),
+          ],
         ),
       ),
+    ),
+
 
       // Overlay
       Container(color: Colors.black.withOpacity(0.6)),
