@@ -10,32 +10,46 @@ jobs:
 
     steps:
 
-    - uses: actions/checkout@v4
+    # Checkout code
+    - name: Checkout
+      uses: actions/checkout@v4
 
-    # ✅ Create fresh Flutter project
+    # Install Flutter properly
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.19.0'
+        channel: 'stable'
+
+    # Verify Flutter installed
+    - name: Check Flutter
+      run: flutter --version
+
+    # Create fresh project (avoids Gradle issues)
     - name: Create Flutter Project
       run: flutter create app
 
-    # ✅ Replace main.dart with your code
+    # Replace your code
     - name: Replace Code
-      run: |
-        cp app_code.dart app/lib/main.dart
+      run: cp app_code.dart app/lib/main.dart
 
-    # ✅ Replace pubspec
+    # Replace pubspec
     - name: Replace Pubspec
-      run: |
-        cp pubspec.yaml app/pubspec.yaml
+      run: cp pubspec.yaml app/pubspec.yaml
 
-    - name: Install dependencies
+    # Get dependencies
+    - name: Install Dependencies
       run: |
         cd app
         flutter pub get
 
+    # Build APK
     - name: Build APK
       run: |
         cd app
         flutter build apk --release
 
+    # Upload APK
     - name: Upload APK
       uses: actions/upload-artifact@v4
       with:
