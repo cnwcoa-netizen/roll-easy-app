@@ -10,34 +10,47 @@ jobs:
 
     steps:
 
-    # Checkout repo
+    # Checkout code
     - uses: actions/checkout@v4
 
-    # Install Flutter (LATEST STABLE)
+    # Setup Java (VERY IMPORTANT)
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    # Setup Flutter
     - uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.22.0'
         channel: 'stable'
 
-    # Verify installation
-    - run: flutter doctor
+    # Accept Android licenses (CRITICAL FIX)
+    - name: Accept Licenses
+      run: yes | flutter doctor --android-licenses
 
-    # Create fresh project
-    - run: flutter create app
+    # Create clean project
+    - name: Create Project
+      run: flutter create app
 
-    # Replace main.dart
-    - run: cp app_code.dart app/lib/main.dart
+    # Replace code
+    - name: Copy Code
+      run: cp app_code.dart app/lib/main.dart
 
-    # Replace pubspec.yaml
-    - run: cp pubspec.yaml app/pubspec.yaml
+    # Replace pubspec
+    - name: Copy Pubspec
+      run: cp pubspec.yaml app/pubspec.yaml
 
     # Install dependencies
-    - run: |
+    - name: Pub Get
+      run: |
         cd app
         flutter pub get
 
-    # Build APK (DEBUG first - more stable)
-    - run: |
+    # Build APK (DEBUG SAFE MODE)
+    - name: Build APK
+      run: |
         cd app
         flutter build apk --debug
 
