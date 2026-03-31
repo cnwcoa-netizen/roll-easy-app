@@ -10,58 +10,55 @@ jobs:
 
     steps:
 
-    # Checkout repo
+    # Checkout code
     - uses: actions/checkout@v4
 
-    # Setup Java 17 (required)
+    # Setup Java (required for Gradle)
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    # Setup Flutter
+    # Setup Flutter (this also sets up Android SDK internally)
     - name: Setup Flutter
       uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.22.0'
         channel: 'stable'
 
-    # Install Android SDK components manually
-    - name: Install Android SDK
-      run: |
-        yes | sdkmanager --licenses
-        sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
+    # Verify setup
+    - run: flutter doctor
 
-    # Create clean Flutter project
+    # Create fresh Flutter project (v2 embedding ensured)
     - name: Create Project
       run: flutter create app
 
-    # Replace code
+    # Replace main.dart
     - name: Copy Code
       run: cp app_code.dart app/lib/main.dart
 
-    # Replace pubspec
+    # Replace pubspec.yaml
     - name: Copy Pubspec
       run: cp pubspec.yaml app/pubspec.yaml
 
-    # Clean build (important)
-    - name: Clean Project
-      run: |
-        cd app
-        flutter clean
-
-    # Get dependencies
+    # Install dependencies
     - name: Pub Get
       run: |
         cd app
         flutter pub get
 
-    # Build APK (safe mode)
+    # Clean build (important)
+    - name: Clean
+      run: |
+        cd app
+        flutter clean
+
+    # Build APK
     - name: Build APK
       run: |
         cd app
-        flutter build apk --debug --no-shrink
+        flutter build apk --debug
 
     # Upload APK
     - uses: actions/upload-artifact@v4
