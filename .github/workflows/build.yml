@@ -10,10 +10,10 @@ jobs:
 
     steps:
 
-    # Checkout code
+    # Checkout repo
     - uses: actions/checkout@v4
 
-    # Setup Java (VERY IMPORTANT)
+    # Setup Java 17 (required)
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
@@ -21,16 +21,19 @@ jobs:
         java-version: '17'
 
     # Setup Flutter
-    - uses: subosito/flutter-action@v2
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
       with:
         flutter-version: '3.22.0'
         channel: 'stable'
 
-    # Accept Android licenses (CRITICAL FIX)
-    - name: Accept Licenses
-      run: yes | flutter doctor --android-licenses
+    # Install Android SDK components manually
+    - name: Install Android SDK
+      run: |
+        yes | sdkmanager --licenses
+        sdkmanager "platform-tools" "platforms;android-33" "build-tools;33.0.2"
 
-    # Create clean project
+    # Create clean Flutter project
     - name: Create Project
       run: flutter create app
 
@@ -42,17 +45,23 @@ jobs:
     - name: Copy Pubspec
       run: cp pubspec.yaml app/pubspec.yaml
 
-    # Install dependencies
+    # Clean build (important)
+    - name: Clean Project
+      run: |
+        cd app
+        flutter clean
+
+    # Get dependencies
     - name: Pub Get
       run: |
         cd app
         flutter pub get
 
-    # Build APK (DEBUG SAFE MODE)
+    # Build APK (safe mode)
     - name: Build APK
       run: |
         cd app
-        flutter build apk --debug
+        flutter build apk --debug --no-shrink
 
     # Upload APK
     - uses: actions/upload-artifact@v4
