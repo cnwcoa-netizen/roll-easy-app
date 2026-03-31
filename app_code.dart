@@ -74,7 +74,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
 
   String selectedMake = "KB";
-  String lang = "en";
   TextEditingController controller = TextEditingController();
 
   Map<String, dynamic>? result;
@@ -248,9 +247,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   controller: controller,
                   style: TextStyle(color: Colors.white),
                   decoration: InputDecoration(
-                    labelText: lang == "te"
-                        ? "లోపం కోడ్ నమోదు చేయండి"
-                        : "Enter Fault Code",
+                    labelText: "Enter Fault Code",
                     labelStyle: TextStyle(color: Colors.white),
                     border: OutlineInputBorder(),
                   ),
@@ -261,11 +258,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ElevatedButton(
                   onPressed: diagnose,
                   child: Text("Diagnose"),
-                ),
-
-                Switch(
-                  value: lang == "te",
-                  onChanged: (v) => setState(() => lang = v ? "te" : "en"),
                 ),
 
                 SizedBox(height: 20),
