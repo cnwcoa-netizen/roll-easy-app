@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_tts/flutter_tts.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 void main() {
@@ -27,7 +26,6 @@ class _HomeScreenState extends State<HomeScreen> {
   String lang = "en";
   TextEditingController controller = TextEditingController();
 
-  FlutterTts tts = FlutterTts();
   SpeechToText speech = SpeechToText();
 
   Map<String, dynamic>? result;
@@ -126,114 +124,3 @@ class _HomeScreenState extends State<HomeScreen> {
       "0099": {"fault": "System healthy", "action": "No issue"}
     }
   };
-
-  // 🎤 Voice Input
-  void startListening() async {
-    bool available = await speech.initialize();
-    if (available) {
-      speech.listen(onResult: (res) {
-        controller.text = res.recognizedWords.replaceAll(" ", "");
-      });
-    }
-  }
-
-  // 🔊 Voice Output
-  void speak(String text) async {
-    await tts.setLanguage(lang == "te" ? "te-IN" : "en-US");
-    await tts.speak(text);
-  }
-
-  void diagnose() {
-    String code = controller.text.trim();
-
-    if (wspDB[selectedMake]?[code] != null) {
-      result = wspDB[selectedMake]![code];
-    } else {
-      result = {"fault": "Unknown Code", "action": "Check manually"};
-    }
-
-    setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Scaffold(
-      appBar: AppBar(
-        title: Column(
-          children: [
-            Text("Roll Easy"),
-            Text("Coaching Depot - KAKINADA", style: TextStyle(fontSize: 12))
-          ],
-        ),
-      ),
-
-      body: Padding(
-        padding: EdgeInsets.all(16),
-        child: Column(
-          children: [
-
-            DropdownButton(
-              value: selectedMake,
-              items: ["KB", "Escorts", "Faiveley"]
-                  .map((e) => DropdownMenuItem(value: e, child: Text(e)))
-                  .toList(),
-              onChanged: (v) => setState(() => selectedMake = v!),
-            ),
-
-            TextField(
-              controller: controller,
-              decoration: InputDecoration(
-                labelText: lang == "te"
-                    ? "లోపం కోడ్ నమోదు చేయండి"
-                    : "Enter Fault Code",
-                border: OutlineInputBorder(),
-              ),
-            ),
-
-            Row(
-              children: [
-                IconButton(icon: Icon(Icons.mic), onPressed: startListening),
-                IconButton(
-                  icon: Icon(Icons.volume_up),
-                  onPressed: () {
-                    if (result != null) {
-                      speak("${result!["fault"]}. ${result!["action"]}");
-                    }
-                  },
-                ),
-              ],
-            ),
-
-            ElevatedButton(
-              onPressed: diagnose,
-              child: Text(lang == "te" ? "పరిశీలించండి" : "Diagnose"),
-            ),
-
-            Switch(
-              value: lang == "te",
-              onChanged: (v) => setState(() => lang = v ? "te" : "en"),
-            ),
-
-            SizedBox(height: 20),
-
-            if (result != null)
-              Card(
-                child: Padding(
-                  padding: EdgeInsets.all(16),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text("Fault: ${result!["fault"]}"),
-                      SizedBox(height: 10),
-                      Text("Action: ${result!["action"]}")
-                    ],
-                  ),
-                ),
-              )
-          ],
-        ),
-      ),
-    );
-  }
-}
