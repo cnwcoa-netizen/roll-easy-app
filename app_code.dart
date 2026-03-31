@@ -194,8 +194,7 @@ class _HomeScreenState extends State<HomeScreen> {
           Container(
             decoration: BoxDecoration(
               image: DecorationImage(
-                image: NetworkImage(
-                  "https://upload.wikimedia.org/wikipedia/commons/3/3e/Vande_Bharat_Train.jpg"
+                image: AssetImage("assets/vande_bharat.jpg")
                 ),
                 fit: BoxFit.cover,
               ),
