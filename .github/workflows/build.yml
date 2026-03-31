@@ -10,48 +10,39 @@ jobs:
 
     steps:
 
-    # Checkout code
-    - name: Checkout
-      uses: actions/checkout@v4
+    # Checkout repo
+    - uses: actions/checkout@v4
 
-    # Install Flutter properly
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
+    # Install Flutter (LATEST STABLE)
+    - uses: subosito/flutter-action@v2
       with:
-        flutter-version: '3.19.0'
+        flutter-version: '3.22.0'
         channel: 'stable'
 
-    # Verify Flutter installed
-    - name: Check Flutter
-      run: flutter --version
+    # Verify installation
+    - run: flutter doctor
 
-    # Create fresh project (avoids Gradle issues)
-    - name: Create Flutter Project
-      run: flutter create app
+    # Create fresh project
+    - run: flutter create app
 
-    # Replace your code
-    - name: Replace Code
-      run: cp app_code.dart app/lib/main.dart
+    # Replace main.dart
+    - run: cp app_code.dart app/lib/main.dart
 
-    # Replace pubspec
-    - name: Replace Pubspec
-      run: cp pubspec.yaml app/pubspec.yaml
+    # Replace pubspec.yaml
+    - run: cp pubspec.yaml app/pubspec.yaml
 
-    # Get dependencies
-    - name: Install Dependencies
-      run: |
+    # Install dependencies
+    - run: |
         cd app
         flutter pub get
 
-    # Build APK
-    - name: Build APK
-      run: |
+    # Build APK (DEBUG first - more stable)
+    - run: |
         cd app
-        flutter build apk --release
+        flutter build apk --debug
 
     # Upload APK
-    - name: Upload APK
-      uses: actions/upload-artifact@v4
+    - uses: actions/upload-artifact@v4
       with:
         name: roll-easy-apk
-        path: app/build/app/outputs/flutter-apk/app-release.apk
+        path: app/build/app/outputs/flutter-apk/app-debug.apk
