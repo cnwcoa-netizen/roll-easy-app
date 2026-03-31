@@ -273,17 +273,18 @@ class _HomeScreenState extends State<HomeScreen> {
                         children: [
                           Text("Fault: ${result!["fault"]}"),
                           SizedBox(height: 10),
-                          Text("Action: ${result!["action"]}"
+                          Text("Action: ${result!["action"]}")
                           ],
                         ),
                       ),
                     ),
-                ],
-              ),
-            ), 
-          ), 
-        ),
-      ],
-    ),
-  );
+                 ],
+               ),
+             ), 
+           ), 
+         ),
+       ],
+     ),
+   );
+ }
 }
